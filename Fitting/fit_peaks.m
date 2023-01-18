@@ -84,6 +84,7 @@ meta.tFit = tFit;
 [~, iRight] = min(abs(s - data.PosBorder(nPeaks)));
 i0    = iLeft:iRight;
 score = sqrt(sum((tFit(i0) - t(i0)).^2))/length(t(i0));
+data.score = score;
 
 
 

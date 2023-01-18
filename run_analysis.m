@@ -1,4 +1,4 @@
-function run_analysis(path_raw, path_data, config, opts)
+function run_analysis(path_raw, options)
 % This functions runs analysis over all files in path_raw and stores data
 % in path_data using the configuration stored in configuration. The mode
 % can be either 'test' or 'production'. When it's 'test', it runs the code
@@ -7,16 +7,17 @@ function run_analysis(path_raw, path_data, config, opts)
 
 arguments 
     path_raw 
-    path_data 
-    config                    = []
-    opts.mode                 = 'production'
-    opts.overwriteDatabase    = false;
-    opts.yesplot              = true;
+    options.mode                 = 'production'
+    options.overwriteDatabase    = false;
+    options.yesplot              = true;
+    options.depthInEmbryo        = 30;
+    options.npts                 = 2000;
+    options.path_data            = path_raw;
 end
 
-fprintf('Analyzing files in %s mode\n\n',opts.mode)
+fprintf('Analyzing files in %s mode\n\n',options.mode)
 
-
+path_data = options.path_data;
 warning('off', 'MATLAB:MKDIR:DirectoryExists');
 if ~isfolder(path_data)
     mkdir(path_data)
@@ -25,7 +26,7 @@ end
 
 % get files
 %
-Files = get_files(path_raw, mode=opts.mode);
+Files = get_files(path_raw, mode=options.mode);
 
 
 % change this in the future. Runs only those files that contain Kr and Eve.
@@ -37,51 +38,37 @@ Files   = Files(contains(Files,'BcdKrEve'));
 % Loop over all files
 %
 nFiles    = length(Files); 
-for i = 2:nFiles
-    
-    tic    
-
-    % get filename and genotype. Make folders, if necessary.
-    %
+for i = 1:nFiles
     file     = Files{i};
-    c        = strsplit(file,{filesep,'.'});
-    filename = char(c(end-1));
-    genotype = char(c(end-2));   
-    path_gen = [path_data,genotype];
-    if ~isfolder(path_gen)
-        mkdir(path_gen)
-    end
-    path_datafile = [path_gen,'/',filename];
-    mkdir(path_datafile)
-    
+    fprintf('Running:%d/%d %s\n',i,nFiles, file)
 
-    % check if the filename exists on FlySection database
+    tic    
+    try 
+        % processing image
+        %
+        [IM,metadata] = read_raw_image(file);
+        [IM,data]     = image_pre_processing(IM,metadata,options);
+        [data,IM]     = analyze_images(IM,data);
 
-    
-    % get channels and channelnames from the filename.
-    c = strsplit(filename,' ');  
-    [channelID, channelnames] = match_channels(c(end));
+        % processing embryo
+        %
+        [data,IM] = analyze_embryo(IM,data); 
 
-    
-    % run analysis
-    fprintf('Running:%d/%d %s\n',i,nFiles, filename)
-     try    
-        data = analyze(file,path_datafile,config,channelID,channelnames,genotype);  
+        % fitting
+        %
         data = fitting(data,path_datafile); 
 
         % upload data to database
-        if opts.overwriteDatabase
+        if options.overwriteDatabase
             upload2Firebase(data);
         end
-        
+       
         % save file. This fn is helpful when running parallel for loop
         parsave([path_datafile,'/',filename],data)
-       
     catch ME
         disp(['Error message: ',ME.message])
         fprintf('Error location : %s in line: %d \n', ME.stack(1).name,ME.stack(1).line)
     end
-   
     toc 
     
     close all

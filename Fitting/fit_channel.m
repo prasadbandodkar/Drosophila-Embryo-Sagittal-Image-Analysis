@@ -24,8 +24,9 @@ for i=1:nSlices
      [H,I,bcoor] = find_peak_locations(t2,nPeaks,s0);
      [data2,metadata2] = fit_peaks(t2,channelname,nPeaks,H,I,bcoor,s0);
 
-    % get single data by combining both sides. Currently, we take the mean.
+    % get a single data by combining both sides. Currently, we take the mean.
     % This can change in the future.
+    %
     data.sPeaks(i,:)      = (data1.sPeaks + data2.sPeaks)/2;
     data.AntBorder(i,:)   = (data1.AntBorder + data2.AntBorder)/2; 
     data.PosBorder(i,:)   = (data1.PosBorder + data2.PosBorder)/2;

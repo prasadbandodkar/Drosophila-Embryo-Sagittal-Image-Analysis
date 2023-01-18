@@ -40,7 +40,7 @@ channelnames = channelnames(vCh);
 % Fitting
 %
 AllGeneInfo = load("AllGeneInfo.mat");
-AllGeneInfo  = AllGeneInfo.AllGeneInfo;
+AllGeneInfo = AllGeneInfo.AllGeneInfo;
 for i=1:nChannels
     channelname = char(channelnames(i));
    
@@ -75,7 +75,6 @@ for i=1:nChannels
 end
 
 
-data.yesfit = true;
 
 
 

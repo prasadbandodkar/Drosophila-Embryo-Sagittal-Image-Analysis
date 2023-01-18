@@ -69,6 +69,7 @@ hold on
 plot(s(bcoor(1,1)),t(bcoor(1,1)),'*')
 %}
 
+
 if nPeaks>1
     for i = 2:nPeaks
         t2              = t(I(i-1):I(i));

@@ -12,17 +12,8 @@ path_raw          = '/Volumes/Extreme/Projects/DGRP_Project/Data_lsm/';
 path_data         = '../Data/10/';
 
 
-% options
-yesplot = true;
-mode    = 'test';
 
-
-% Analysis configuration
-config.depthInEmbryo = 30;                 % in microns. This was originally 18.36
-config.npts          = 4000;
-
-
-run_analysis(path_raw,path_data,config,mode=mode,yesplot=yesplot);
+run_analysis(path_raw,path_data=path_data,yesplot=true,depthInEmbryo=30,npts=2000,mode='test');
 
 
 

@@ -6,8 +6,8 @@ Zp = Zp(:);
 
 % rotate points so that the x axis is approximately parallel to the AP axis
 %
-phi      = deg2rad(phi);
-[Xp,Yp]    = rotatePoints(-phi, Xp, Yp);     % rotate anti-clockwise
+phi     = deg2rad(phi);
+[Xp,Yp] = rotatePoints(-phi, Xp, Yp);     % rotate anti-clockwise
 
 
 % pick coordinates to fit surface 
@@ -86,7 +86,7 @@ else
 end
 
 
-% rotate poles back by angle
+% rotate poles back by phi
 %
 [Poles(:,1),Poles(:,2)] = rotatePoints(phi, Poles(:,1), Poles(:,2));
 
